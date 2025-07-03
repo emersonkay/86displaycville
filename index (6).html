@@ -1,0 +1,89 @@
+
+<html>
+<head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: auto;
+      max-height: 100vh;
+    }
+    #menu {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <img id="menu" src="https://rayrayshogpit.com/s/TV-MENU19final.png" />
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAqz7W-fTKixT-4rRpam8jGRHMUnfsbSFY",
+      authDomain: "rayraysoverlay.firebaseapp.com",
+      databaseURL: "https://rayraysoverlay-default-rtdb.firebaseio.com",
+      projectId: "rayraysoverlay",
+      storageBucket: "rayraysoverlay.firebasestorage.app",
+      messagingSenderId: "483772055625",
+      appId: "1:483772055625:web:f6ba083d3e1ae42af83f98",
+      measurementId: "G-V6Q23RGZV1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    async function fetchState() {
+      const snap = await db.ref('overlayState').get();
+      return snap.exists() ? snap.val() : {};
+    }
+
+    async function updateDisplay() {
+      const state = await fetchState();
+      const container = document.getElementById('container');
+
+      // Clear existing overlays
+      document.querySelectorAll('.overlay').forEach(el => el.remove());
+
+      Object.entries(state).forEach(([id, visible]) => {
+        if (visible) {
+          const img = document.createElement('img');
+          img.src = `https://rayrayshogpit.com/s/${id}.png`;
+          img.className = 'overlay';
+          img.style.display = 'block';
+          container.appendChild(img);
+        }
+      });
+    }
+
+    setInterval(updateDisplay, 3000);
+    updateDisplay();
+  </script>
+</body>
+</html>
