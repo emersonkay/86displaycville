@@ -75,7 +75,8 @@
       Object.entries(state).forEach(([id, visible]) => {
         if (visible) {
           const img = document.createElement('img');
-          img.src = `https://rayrayshogpit.com/s/${id}.png`;
+          const safeId = encodeURIComponent(id);
+          img.src = `https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/${safeId}.png?alt=media`;
           img.className = 'overlay';
           img.style.display = 'block';
           container.appendChild(img);
