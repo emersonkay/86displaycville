@@ -1,38 +1,39 @@
-
+<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: transparent;
+      background: black;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
+    }
+    #container {
+      position: relative;
       width: 100vw;
       height: 100vh;
     }
-    #container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-    }
     #menu {
-      width: 100%;
-      height: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       object-fit: contain;
-      display: block;
+      z-index: 0;
     }
     .overlay {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: auto;
+      width: 100vw;
+      height: 100vh;
       object-fit: contain;
       display: none;
       z-index: 1;
@@ -68,7 +69,7 @@
       const state = await fetchState();
       const container = document.getElementById('container');
 
-      // Clear existing overlays
+      // Remove existing overlays
       document.querySelectorAll('.overlay').forEach(el => el.remove());
 
       Object.entries(state).forEach(([id, visible]) => {
