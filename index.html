@@ -69,14 +69,12 @@
       const state = await fetchState();
       const container = document.getElementById('container');
 
-      // Remove existing overlays
       document.querySelectorAll('.overlay').forEach(el => el.remove());
 
       Object.entries(state).forEach(([id, visible]) => {
         if (visible) {
           const img = document.createElement('img');
-          const safeId = encodeURIComponent(id);
-          img.src = `https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/${safeId}.png?alt=media`;
+          img.src = `https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/${encodeURIComponent(id)}.png?alt=media`;
           img.className = 'overlay';
           img.style.display = 'block';
           container.appendChild(img);
@@ -84,8 +82,14 @@
       });
     }
 
-    setInterval(updateDisplay, 3000);
+    // Run once on load
     updateDisplay();
+
+    // Run again after 2 seconds (helps on slower devices)
+    setTimeout(updateDisplay, 2000);
+
+    // Poll every 3 seconds
+    setInterval(updateDisplay, 3000);
   </script>
 </body>
 </html>
