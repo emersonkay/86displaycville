@@ -2,41 +2,38 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: transparent;
+      overflow: hidden;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-
     #container {
-      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 100%;
-      height: 100%;
+      height: auto;
+      max-height: 100vh;
     }
-
     #menu {
       width: 100%;
-      height: 100%;
+      height: auto;
       object-fit: contain;
       display: block;
     }
-
     .overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: auto;
       object-fit: contain;
       display: none;
       z-index: 1;
@@ -63,36 +60,48 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    const overlayURLs = {
+      "jerk_chicken_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/jerk_chicken_main.png?alt=media&token=06e55d0b-fef2-4666-b498-092d94b9be61",
+      "brisket_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/brisket_main.png?alt=media&token=9019b373-b655-433e-964d-99d71b22ea81",
+      "pulled_pork_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/pulled_pork_main.png?alt=media&token=a56969e6-f757-4fd3-8156-8bf1573f71bf",
+      "chop_pork_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/chop_pork_main.png?alt=media&token=5b1ee11a-49e0-4c80-b996-c10d03e4a998",
+      "hot_link_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/hot_link_main.png?alt=media&token=9a533631-0192-4658-8165-2cfa946e4769",
+      "cauliflower_main": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/cauliflower_main.png?alt=media&token=f45b834f-b376-4b1f-aad5-f7662b3aacac",
+      "wings": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/wings.png?alt=media&token=fe3725fd-cfab-4350-97a9-55d17cb09e47",
+      "spare_ribs": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/spare_ribs.png?alt=media&token=a0234e6d-e49c-4546-aa06-63ed6830ab74",
+      "rib_tips": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/rib_tips.png?alt=media&token=cc18a882-2726-46e9-8f27-b8290b584895",
+      "jerk_chicken_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/jerk_chicken_bulk.png?alt=media&token=fb48954b-a8fd-45d7-b0ac-0808483a4321",
+      "brisket_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/brisket_bulk.png?alt=media&token=159982fb-59d0-48e2-bfe3-d828e70e8382",
+      "pulled_pork_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/pulled_pork_bulk.png?alt=media&token=788e98c0-e63a-4ce4-8f02-faa1a5d739e2",
+      "chop_pork_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/chop_pork_main.png?alt=media&token=5b1ee11a-49e0-4c80-b996-c10d03e4a998",
+      "hot_link_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/hot_link_bulk.png?alt=media&token=1cfd764d-79f2-483c-8015-5f754ba604e0",
+      "cauliflower_bulk": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/cauliflower_bulk.png?alt=media&token=aad5e576-1476-4722-a7d6-f92551a2b523",
+      "dry_rub_kettle_chips": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/dry_rub_chips.png?alt=media&token=760b0d92-8cec-4266-a845-baaeadee99f6",
+      "cornbread_cobbler": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Cornbread_%20Cobbler.png?alt=media&token=98b99628-312f-43a1-b207-35f17c349232",
+      "boylans_soda": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/boylans_soda.png?alt=media&token=8b4fb305-68f5-4fba-bebf-78b2a8f8034d",
+      "cheerwine": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/cheerwine.png?alt=media&token=134ba26a-1764-4de9-851a-81c1abf4a55a",
+      "senorita": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/senorita.png?alt=media&token=1e8589c3-1a64-4144-966b-9c69fa102f6a",
+      "banana_pudding": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/banana_puddin.png?alt=media&token=fc2e5c19-9b93-4e00-b4fd-29ee82450bb1",
+      "bite_this_special": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/bite_this.png?alt=media&token=5b74fdc5-e3c8-4937-9d5c-4764810dd0e6"
+    };
+
     async function fetchState() {
       const snap = await db.ref('overlayState').get();
       return snap.exists() ? snap.val() : {};
     }
 
-    const overlayURLs = {
-      "Baked_beans": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Baked_beans.png?alt=media&token=85dd1380-52b2-4fd6-b9b6-ff65bc14ef6c",
-      "Coleslaw": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Coleslaw.png?alt=media&token=72290b95-2e9c-4219-ae0d-57913a56eb0a",
-      "Collard-Greens-overlay": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Collard%20Greens%20overlay.png?alt=media&token=86424637-0d06-42fc-b4e2-267bed51bf7b",
-      "Cornbread-_Cobbler": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Cornbread_%20Cobbler.png?alt=media&token=98b99628-312f-43a1-b207-35f17c349232",
-      "Mac_and_Cheese": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Mac_and_Cheese.png?alt=media&token=40a33b92-a221-4ff5-9ea6-fead2429cd27",
-      "The-meat-sweats-overlay": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/The%20meat%20sweats%20overlay.png?alt=media&token=d2ff9003-4097-4f55-90ce-3626e0aa3774",
-      "baby_backs": "https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/baby_backs.png?alt=media&token=19fe5493-d0d0-4e2c-a57e-e3f477fe873e",
-      // ... add the rest the same way
-    };
-
     async function updateDisplay() {
       const state = await fetchState();
       const container = document.getElementById('container');
-
-      // Clear old overlays
       document.querySelectorAll('.overlay').forEach(el => el.remove());
 
-      Object.entries(state).forEach(([key, isVisible]) => {
-        if (isVisible && overlayURLs[key]) {
-          const overlay = document.createElement('img');
-          overlay.src = overlayURLs[key];
-          overlay.className = 'overlay';
-          overlay.style.display = 'block';
-          container.appendChild(overlay);
+      Object.entries(state).forEach(([id, visible]) => {
+        if (visible && overlayURLs[id]) {
+          const img = document.createElement('img');
+          img.src = overlayURLs[id];
+          img.className = 'overlay';
+          img.style.display = 'block';
+          container.appendChild(img);
         }
       });
     }
