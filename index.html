@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
@@ -45,13 +45,6 @@
     <img id="menu" src="https://rayrayshogpit.com/s/TV-MENU19final.png" />
   </div>
 
-  <!-- 🔄 Preload overlays (optional but helps Yodeck load all images) -->
-  <div style="display: none;">
-    <img src="https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Cornbread_%20Cobbler.png?alt=media&token=98b99628-312f-43a1-b207-35f17c349232" />
-    <img src="https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/The%20meat%20sweats%20overlay.png?alt=media&token=d2ff9003-4097-4f55-90ce-3626e0aa3774" />
-    <img src="https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/Collard%20Greens%20overlay.png?alt=media" />
-  </div>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAqz7W-fTKixT-4rRpam8jGRHMUnfsbSFY",
@@ -72,18 +65,21 @@
       return snap.exists() ? snap.val() : {};
     }
 
+    async function fetchUrls() {
+      const snap = await db.ref('overlayUrls').get();
+      return snap.exists() ? snap.val() : {};
+    }
+
     async function updateDisplay() {
-      const state = await fetchState();
+      const [state, urls] = await Promise.all([fetchState(), fetchUrls()]);
       const container = document.getElementById('container');
 
-      // Remove existing overlays
       document.querySelectorAll('.overlay').forEach(el => el.remove());
 
       Object.entries(state).forEach(([id, visible]) => {
-        if (visible) {
+        if (visible && urls[id]) {
           const img = document.createElement('img');
-          const encodedId = encodeURIComponent(id);
-          img.src = `https://firebasestorage.googleapis.com/v0/b/rayraysoverlay.firebasestorage.app/o/${encodedId}.png?alt=media`;
+          img.src = urls[id];
           img.className = 'overlay';
           img.style.display = 'block';
           container.appendChild(img);
@@ -91,11 +87,8 @@
       });
     }
 
-    // 🕒 Wait 5 seconds before starting updates (fix for Yodeck timing)
-    setTimeout(() => {
-      updateDisplay();
-      setInterval(updateDisplay, 3000);
-    }, 5000);
+    setInterval(updateDisplay, 3000);
+    updateDisplay();
   </script>
 </body>
 </html>
